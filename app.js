@@ -1,21 +1,20 @@
 "use strict";
 exports.__esModule = true;
 var express = require("express");
-var pty = require("pty.js");
+var pty = require("node-pty");
 var app = express();
 var expressWs = require('express-ws')(app);
-// Serve static assets from ./static
-app.use(express.static(__dirname + "/static"));
-// Instantiate shell and set up data handlers
+
+app.use(express.static(__dirname + "/"));
+
 expressWs.app.ws('/shell', function (ws, req) {
-    // Spawn the shell
-    // Compliments of http://krasimirtsonev.com/blog/article/meet-evala-your-terminal-in-the-browser-extension
-    var shell = pty.spawn('/bin/bash', [], {
+    var shell = pty.spawn('bash', [], {
         name: 'xterm-color',
-        cwd: process.env.PWD,
+        cwd: process.env.HOME,
         env: process.env
     });
-    // For all shell data send it to the websocket
+
+    // // For all shell data send it to the websocket
     shell.on('data', function (data) {
         ws.send(data);
     });
